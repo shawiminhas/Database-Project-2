@@ -1,25 +1,47 @@
 import React, { useState } from 'react';
 import { ReactDOM } from 'react-dom/client'
+import APIService from './APIService';
 
 function InformationForm() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+    creditCard: "",
+  });
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setphoneNumber] = useState("");
-  const [address, setAddress] = useState("");
-  const [creditCard, setCreditCard] = useState("");
+  const insertUser = async () => {
+    try {
+      await APIService.insertUser(formData)
+      console.log("User inserted successfully");
+    } catch (error) {
+      console.error("Error inserting user: ", error);
+    }
+  };
 
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("First Name: ", firstName);
-    console.log("Last Name: ", lastName);
-    console.log("Email: ", email);
-    console.log("Phone Number: ", phoneNumber);
-    console.log("Address: ", address);
-    console.log("Credit Card: ", creditCard);
 
-  }
+    console.log("First Name: ", formData.firstName);
+    console.log("Last Name: ", formData.lastName);
+    console.log("Email: ", formData.email);
+    console.log("Phone Number: ", formData.phoneNumber);
+    console.log("Address: ", formData.address);
+    console.log("Credit Card: ", formData.creditCard);
+    
+    await insertUser();
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      address: "",
+      creditCard: "",
+    });
+  };
 
 
   return (
@@ -31,48 +53,48 @@ function InformationForm() {
           <input 
             aria-label='Enter your first name'
             type='text'
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            value={formData.firstName}
+            onChange={(e) => setFormData({...formData, firstName: e.target.value})}
             placeholder='First name'
             required
             className='p-1 text-sm border'/>
           <input
             aria-label='Enter your last name'
             type='text'
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            value={formData.lastName}
+            onChange={(e) => setFormData({...formData, lastName: e.target.value})}
             placeholder='Last name'
             required
             className='p-1 text-sm border'/>
           <input
             aria-label='Enter your email address'
-            type='text'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type='email'
+            value={formData.email}
+            onChange={(e) => setFormData({...formData, email: e.target.value})}
             placeholder='Email address'
             required
             className='p-1 text-sm border'/>
           <input
             aria-label='Enter your phone number'
             type='text'
-            value={phoneNumber}
-            onChange={(e) => setphoneNumber(e.target.value)}
+            value={formData.phoneNumber}
+            onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
             placeholder='Phone number'
             required
             className='p-1 text-sm border'/>
           <input
             aria-label='Enter your address'
             type='text'
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={formData.address}
+            onChange={(e) => setFormData({...formData, address: e.target.value})}
             placeholder='Address'
             required
             className='p-1 text-sm border'/>
           <input
             aria-label='Enter your credit card info'
             type='text'
-            value={creditCard}
-            onChange={(e) => setCreditCard(e.target.value)}
+            value={formData.creditCard}
+            onChange={(e) => setFormData({...formData, creditCard: e.target.value})}
             placeholder='Credit card number'
             required
             className='p-1 text-sm border'/>
