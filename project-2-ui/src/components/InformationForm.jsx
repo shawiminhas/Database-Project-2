@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { ReactDOM } from 'react-dom/client'
-import APIService from './APIService';
+import APIService from './APIService.js';
+import { useUser } from "@clerk/clerk-react";
 
 function InformationForm() {
+  const { user } = useUser();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    email: user.primaryEmailAddress.emailAddress || "",
     phoneNumber: "",
     address: "",
     creditCard: "",
@@ -18,9 +20,9 @@ function InformationForm() {
       console.log("User inserted successfully");
     } catch (error) {
       console.error("Error inserting user: ", error);
+      alert("Email is already in use");
     }
   };
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -36,7 +38,6 @@ function InformationForm() {
     setFormData({
       firstName: "",
       lastName: "",
-      email: "",
       phoneNumber: "",
       address: "",
       creditCard: "",
@@ -69,10 +70,9 @@ function InformationForm() {
           <input
             aria-label='Enter your email address'
             type='email'
-            value={formData.email}
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
+            value={user.primaryEmailAddress.emailAddress}
             placeholder='Email address'
-            required
+            readOnly
             className='p-1 text-sm border'/>
           <input
             aria-label='Enter your phone number'
@@ -85,17 +85,18 @@ function InformationForm() {
           <input
             aria-label='Enter your address'
             type='text'
-            value={formData.address}
+            value={user.address}
             onChange={(e) => setFormData({...formData, address: e.target.value})}
             placeholder='Address'
             required
             className='p-1 text-sm border'/>
           <input
             aria-label='Enter your credit card info'
-            type='text'
-            value={formData.creditCard}
+            type='tel'
+            min = "0"
             onChange={(e) => setFormData({...formData, creditCard: e.target.value})}
             placeholder='Credit card number'
+            pattern="[0-9\s]{13,19}" 
             required
             className='p-1 text-sm border'/>
             <br />

@@ -11,12 +11,29 @@ export default class APIService{
 
       if (!response.ok) {
         const error = await response.text();
-        throw new Error(`HTTP Error ${response.status}: ${errorDetails}`);
+        throw new Error(`HTTP Error ${response.status}: ${error}`);
       }
 
       return await response.json();
     } catch (error) {
       console.error("Error inserting user: ", error);
+    }
+    throw error;
+  }
+
+  static async existingUser(email) {
+    try {
+      console.log(email);
+      const response = await fetch(`http://localhost:5000/checkExistingUser/${email}`);
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${error}`);
+      }
+
+      return await response.json();
+
+    } catch (error) {
+      throw error;
     }
     throw error;
   }

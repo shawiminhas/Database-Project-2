@@ -2,6 +2,7 @@ import React from 'react'
 import { SignedIn, SignedOut, RedirectToSignIn, UserButton } from '@clerk/clerk-react'; 
 
 const SignIn = () => {
+
   return (
     <header>
       <SignedOut>
