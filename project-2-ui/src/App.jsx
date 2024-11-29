@@ -4,7 +4,6 @@ import React from 'react';
 import SignIn from "./components/SignIn";
 import InformationForm from "./components/InformationForm";
 import APIService from "./components/APIService";
-import ShowInformationForm from "./components/ShowInformationForm";
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 
 const router = createBrowserRouter(
