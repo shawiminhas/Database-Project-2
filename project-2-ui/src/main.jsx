@@ -22,9 +22,7 @@ createRoot(rootElement).render(
       publishableKey={PUBLISHABLE_KEY}
       afterSignOutUrl="/"
     >
-      <BrowserRouter>
         <App />
-      </BrowserRouter>
     </ClerkProvider>
   </StrictMode>
 )

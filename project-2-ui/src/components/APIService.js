@@ -23,7 +23,6 @@ export default class APIService{
 
   static async existingUser(email) {
     try {
-      console.log(email);
       const response = await fetch(`http://localhost:5000/checkExistingUser/${email}`);
       if (!response.ok) {
         const error = await response.text();

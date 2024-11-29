@@ -1,23 +1,40 @@
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useUser, UserButton} from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import React from 'react';
 import SignIn from "./components/SignIn";
 import InformationForm from "./components/InformationForm";
 import APIService from "./components/APIService";
 import ShowInformationForm from "./components/ShowInformationForm";
+import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path='/' element={<SignIn />} />
+
+      <Route path='/addInformation' element={
+          <SignedIn>
+            <div>
+              <UserButton />
+              <InformationForm />
+            </div> 
+            </SignedIn>
+      } />
+
+      <Route path='/dashboard' element={
+        <SignedIn>
+          <UserButton />
+          <p>dashboard</p>
+        </SignedIn>}
+      />
+    </>
+  )
+);
 
 function App() {
   
   return (
-    <div className="App">
-      <SignIn />
-      
-      <SignedIn>
-        <div className="flex flex-col w-screen min-h-screen justify-center items-center bg-gray-100">
-          <ShowInformationForm />
-        </div>
-      </SignedIn>
-    </div>
+    <RouterProvider router={router}/>
   )
 }
 

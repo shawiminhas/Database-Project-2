@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import APIService from './APIService.js';
 import { useUser } from "@clerk/clerk-react";
 
 function InformationForm() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: user.primaryEmailAddress.emailAddress || "",
+    email: "",
     phoneNumber: "",
     address: "",
     creditCard: "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({ ...formData, email: user.primaryEmailAddress?.emailAddress })
+    }
+  }, [isLoaded])
 
   const insertUser = async () => {
     try {
@@ -46,6 +52,7 @@ function InformationForm() {
 
 
   return (
+    <div className="flex flex-col w-screen min-h-screen justify-center items-center bg-gray-100">
     <div className='flex flex-col justify-center items-center bg-gray-100 w-1/2'>
       <h1 className='text-4xl text-gray-500 font-bold mb-3'>Enter Information</h1>
       <div className='border shadow-md p-5 rounded-xl bg-gray-50 mb-5 w-3/6'>
@@ -70,7 +77,7 @@ function InformationForm() {
           <input
             aria-label='Enter your email address'
             type='email'
-            value={user.primaryEmailAddress.emailAddress}
+            value={formData.email}
             placeholder='Email address'
             readOnly
             className='p-1 text-sm border'/>
@@ -85,7 +92,7 @@ function InformationForm() {
           <input
             aria-label='Enter your address'
             type='text'
-            value={user.address}
+            value={formData.address}
             onChange={(e) => setFormData({...formData, address: e.target.value})}
             placeholder='Address'
             required
@@ -104,7 +111,8 @@ function InformationForm() {
         </div>
       </form>
       </div>
-    </div>
+      </div>
+      </div>
   );
 }
 
