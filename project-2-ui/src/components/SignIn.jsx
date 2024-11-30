@@ -26,7 +26,7 @@ const SignIn = () => {
   
 
   if (existingUser !== null) {
-    return existingUser ? <Navigate to="/dashboard" /> : <Navigate to="/addInformation" />
+    return existingUser ? <Navigate to="/app/dashboard" /> : <Navigate to="/app/addInformation" />
   }
   
   return (

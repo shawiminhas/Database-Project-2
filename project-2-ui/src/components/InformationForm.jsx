@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import APIService from './APIService.js';
 import { useUser } from "@clerk/clerk-react";
+import { useNavigate } from 'react-router-dom';
 
 function InformationForm() {
   const { user, isLoaded } = useUser();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -15,15 +17,24 @@ function InformationForm() {
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && isLoaded) {
       setFormData({ ...formData, email: user.primaryEmailAddress?.emailAddress })
     }
-  }, [isLoaded])
+  }, [isLoaded, user])
 
   const insertUser = async () => {
     try {
       await APIService.insertUser(formData)
       console.log("User inserted successfully");
+      navigate('/app/dashboard');
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        emailAddress: "",
+        address: "",
+        creditCard: "",
+      });
     } catch (error) {
       console.error("Error inserting user: ", error);
       alert("Email is already in use");
@@ -32,22 +43,8 @@ function InformationForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    console.log("First Name: ", formData.firstName);
-    console.log("Last Name: ", formData.lastName);
-    console.log("Email: ", formData.email);
-    console.log("Phone Number: ", formData.phoneNumber);
-    console.log("Address: ", formData.address);
-    console.log("Credit Card: ", formData.creditCard);
-    
     await insertUser();
-    setFormData({
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      address: "",
-      creditCard: "",
-    });
+    
   };
 
 
