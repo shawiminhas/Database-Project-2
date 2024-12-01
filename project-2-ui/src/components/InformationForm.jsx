@@ -26,7 +26,7 @@ function InformationForm() {
     try {
       await APIService.insertUser(formData)
       console.log("User inserted successfully");
-      navigate('/app/dashboard');
+      navigate('/dashboard');
       setFormData({
         firstName: "",
         lastName: "",
@@ -49,8 +49,8 @@ function InformationForm() {
 
 
   return (
-    <div className="flex flex-col w-screen min-h-screen justify-center items-center bg-gray-100">
-    <div className='flex flex-col justify-center items-center bg-gray-100 w-1/2'>
+    <div className="flex flex-col w-screen min-h-screen justify-center items-center">
+    <div className='flex flex-col justify-center items-center bg-gray-200 w-1/2'>
       <h1 className='text-4xl text-gray-500 font-bold mb-3'>Enter Information</h1>
       <div className='border shadow-md p-5 rounded-xl bg-gray-50 mb-5 w-3/6'>
       <form onSubmit={handleSubmit} className='flex flex-col space-y-5 items-center'>

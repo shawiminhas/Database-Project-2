@@ -5,11 +5,11 @@ import { UserButton } from '@clerk/clerk-react'
 import { useLocation } from 'react-router-dom'
 
 const navigation = [
-  { name: 'Dashboard', href: '/app/dashboard' },
-  { name: 'Quotes', href: '/app/quotes' },
-  { name: 'Orders', href: '/app/orders' },
-  { name: 'Bills', href: '/app/bills' },
-  { name: 'Metrics', href: '/app/metrics' }
+  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Quotes', href: '/quotes' },
+  { name: 'Orders', href: '/orders' },
+  { name: 'Bills', href: '/bills' },
+  { name: 'Metrics', href: '/metrics' }
 ]
 
 function classNames(...classes) {
@@ -59,11 +59,7 @@ const Navbar = () => {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button
-              type="button"
-              className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-            >
-            </button>
+
 
             {/* Profile dropdown */}
             <UserButton />
