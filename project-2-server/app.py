@@ -45,20 +45,23 @@ def create_user():
     data = request.get_json()
     print(data)
     mycursor = db_connection.cursor()
+
     sql = "INSERT INTO users (first_name, last_name, email, phone_number, address, credit_card) VALUES (%s, %s, %s, %s, %s, %s);"
     user_data = (data["firstName"], data["lastName"], data["email"], data["phoneNumber"], data["address"], data["creditCard"])
     mycursor.execute(sql, user_data)
-    db_connection.commit()
 
+    db_connection.commit()
     message = jsonify({"message": "data successfully inserted into database"}), 200
 
   except IntegrityError as err:
     if err.errno == 1062:
       print(f"Error: {err}")
       message = jsonify({"message": f"Duplicate entry for email: {err}"}), 422
+
   except mysql.connector.Error as err:
     print(f"Error: {err}")
     message = jsonify({"message": f"could not complete, Error: {err}"}), 422
+
   except Exception as e:
     print(f"Unexpected Error: {e}")
     message = jsonify({"message": "An unexpected error occurred"}), 500
@@ -71,7 +74,45 @@ def create_user():
     return message
   
 
+@app.route("/createQuoteRequest", methods = ["POST"])
+def create_quote_request():
+    try:
+      db_connection = getdb()
+      data = request.get_json()
+      print(data)
+      mycursor = db_connection.cursor()
 
+      sql = """
+      INSERT INTO quote_request(client_id, address, square_feet, proposed_price, note, pictures) 
+      VALUES (
+        (SELECT id FROM users WHERE email = %s),
+        %s,
+        %s,
+        %s,
+        %s,
+        %s
+      );
+      """
+      user_data = (data["email"], data["address"], data["squareFeet"], data["proposedPrice"], data["note"], data["pictures"])
+      mycursor.execute(sql, user_data)
+
+      db_connection.commit()
+      message = jsonify({"message": "data successfully inserted into database"}), 200
+    
+    except mysql.connector.Error as err:
+      print(f"Error: {err}")
+      message = jsonify({"message": f"could not complete, Error: {err}"}), 422
+
+    except Exception as e:
+      print(f"Unexpected Error: {e}")
+      message = jsonify({"message": "An unexpected error occurred"}), 500
+
+    finally:
+      if db_connection.is_connected():
+        mycursor.close()
+        db_connection.close()
+      return message
+    
 
 @app.route("/checkExistingUser/<email>")
 def check_existing_user(email):
@@ -106,8 +147,7 @@ def check_existing_user(email):
       mycursor.close()
       db_connection.close()
 
-
-
+    
 
 
 if __name__ == "__main__":

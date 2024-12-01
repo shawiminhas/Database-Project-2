@@ -1,15 +1,13 @@
 import { SignedIn, SignedOut, useUser, UserButton, UserProfile, RedirectToSignIn, Protect} from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
 import React from 'react';
 import InformationForm from "./components/InformationForm";
-import APIService from "./components/APIService";
 import { BrowserRouter, Route, RouterProvider, Routes, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Dashboard from "./pages/dashboard";
-import Navbar from "./components/Navbar";
 import SignInRedirect from "./components/SignInRedirect";
 import NotFound from "./pages/NotFound";
 import ForbiddenAccess from "./pages/ForbiddenAccess";
+import Quotes from "./pages/Quotes";
 
 
 function App() {
@@ -25,9 +23,8 @@ function App() {
           <Route element={<MainLayout />}>
             
             <Route path="/" element={<SignInRedirect />} />
-            <Route path="/addInformation" element={<InformationForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/quotes" element={<Dashboard />} />
+            <Route path="/quotes" element={<Quotes />} />
             <Route path="/orders" element={<Dashboard />} />
             <Route path="/bills" element={<Dashboard />} />
             <Route path="/metrics" element={
@@ -38,6 +35,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
             
           </Route>
+          <Route path="/addInformation" element={<InformationForm />} />
         </Routes>
       </SignedIn>
     </BrowserRouter>
