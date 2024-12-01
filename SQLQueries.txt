@@ -2,9 +2,36 @@ CREATE TABLE users(
   id INT PRIMARY KEY AUTO_INCREMENT,
   first_name VARCHAR(20) NOT NULL,
   last_name VARCHAR(20) NOT NULL,
-  email VARCHAR(40) UNIQUE NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
   phone_number VARCHAR(15) NOT NULL,
   address VARCHAR(200) NOT NULL,
   credit_card VARCHAR(19) NOT NULL,
   admin BOOLEAN DEFAULT FALSE
-)
+);
+
+INSERT INTO users (first_name, last_name, email, phone_number, address, credit_card) VALUES (%s, %s, %s, %s, %s, %s);
+
+CREATE TABLE quote_request (
+  quote_request_id INT PRIMARY KEY AUTO_INCREMENT,
+  client_id INT,
+  address VARCHAR(200) NOT NULL,
+  square_feet INT NOT NULL,
+  proposed_price DECIMAL(10, 2) NOT NULL,
+  note VARCHAR(1000) NOT NULL,
+  pictures VARCHAR(50) NOT NULL,
+  FOREIGN KEY (client_id) REFERENCES users(id)
+);
+
+INSERT INTO quote_request(client_id, address, square_feet, proposed_price, note, pictures) 
+  VALUES (
+    (SELECT id FROM users WHERE email = %s),
+    %s,
+    %s,
+    %s,
+    %s,
+    %s
+  );
+
+
+
+
