@@ -4,11 +4,14 @@ import Navbar from '../src/components/Navbar';
 
 const MainLayout = () => {
   return (
-    <>
+    <div className="flex flex-col min-h-screen overflow-hidden">
       <Navbar />
-      <Outlet />
-    </>
-  )
+      
+      <main className="flex-grow overflow-auto">
+        <Outlet />
+      </main>
+    </div>
+  );
 }
 
-export default MainLayout
+export default MainLayout;
