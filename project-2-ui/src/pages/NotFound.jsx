@@ -3,8 +3,8 @@ import React from 'react'
 const NotFound = () => {
   return (
     <main className="grid min-h-screen place-items-center px-6 py-24 sm:py-32 lg:px-8">
-        <div className="text-center">
-          <p className="text-base font-semibold text-gray-700">404</p>
+        <div className="text-center border-4 border-gradient-to-r from-blue-500 via-green-500 to-purple-500 rounded-xl shadow-2xl p-8">
+          <p className="text-base font-semibold text-gray-500">404</p>
           <h1 className="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
             Page not found
           </h1>

@@ -11,8 +11,12 @@ const CreateQuoteForm = () => {
   const isAdmin = has({ role: 'org:admin' });
   if (isAdmin) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-2xl">
-        <p>You are the admin, you don’t pay for services!</p>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className='border-4 p-6 rounded-xl hover:scale-110 transition-all font-semibold border-gray-400 shadow-xl bg-white text-2xl text-gray-800'>
+          <p className='text-center'>
+            You are the admin, you don't pay for services!
+          </p>
+        </div>
       </div>
     );
   }

@@ -118,9 +118,6 @@ def create_quote_request():
 def check_existing_user(email):
   try:
     db_connection = getdb()
-
-    print(email)
-
     mycursor = db_connection.cursor()
 
     sql = "SELECT COUNT(*) FROM users WHERE email = %s;"
@@ -147,7 +144,50 @@ def check_existing_user(email):
       mycursor.close()
       db_connection.close()
 
+@app.route("/getQuoteRequests/<email>/<admin>")
+def get_quote_requests(email, admin):
+    try:
+      db_connection = getdb()
+      mycursor = db_connection.cursor()
+
+      if admin == "True":
+        sql = """
+        SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.note, quote_request.status
+        FROM users
+        INNER JOIN quote_request ON quote_request.client_id = users.id
+        ORDER BY (quote_request.status = 'Pending') DESC;
+        """
+        mycursor.execute(sql)
+      else:
+        sql = """
+        SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.note, quote_request.status 
+        FROM users
+        INNER JOIN quote_request ON quote_request.client_id = users.id
+        WHERE users.email = %s
+        ORDER BY (quote_request.status = 'Pending') DESC;
+        """
+        mycursor.execute(sql, (email,))
+      
+      result = mycursor.fetchall()
+
+      columns = [column[0] for column in mycursor.description] 
+      result_dict = [dict(zip(columns, row)) for row in result]
+      return jsonify(result_dict)
     
+    except mysql.connector.Error as err:
+      print(f"Database Error: {err}")
+      return jsonify({"message": f"Database error occurred: {err}"}), 500
+    
+    except Exception as e:
+      print(f"Unexpected Error: {e}")
+      return jsonify({"message": "An unexpected error occurred"}), 500
+
+    finally:
+      if db_connection.is_connected():
+        mycursor.close()
+        db_connection.close()
+
+
 
 
 if __name__ == "__main__":
