@@ -13,29 +13,26 @@ CORS(app)
 
 
 def getdb():
-    try:
-      db_connection = mysql.connector.connect(
-        user = os.getenv("USERNAME"),
-        password = os.getenv("PASSWORD"),
-        host = os.getenv("HOST"),
-        database = os.getenv("DATABASE"),
-      )
-      print("Database connected successfully")
-      return db_connection
-    except mysql.connector.Error as err:
-      print(f"Database not connected error : {err}")
-      return None
+  db_connection = mysql.connector.connect(
+    user = os.getenv("USERNAME"),
+    password = os.getenv("PASSWORD"),
+    host = os.getenv("HOST"),
+    database = os.getenv("DATABASE"),
+  )
+  return db_connection
 
 
-@app.route("/")
 def create_connection():
-  db_connection = getdb()
-  if db_connection:
-    db_connection.close()
-    return jsonify({"message": "Database connected successfully"}), 200
-  else:
-    return jsonify({"message": "Failed to connect to database"}), 500
+  try:
+    db_connection = getdb()
+    if db_connection:
+      db_connection.close()
+      print("Database connected successfully")
+  
+  except Exception as e:
+    print(f"Error: {e}")
 
+create_connection()
 
 
 @app.route("/createUser", methods = ["POST"])
@@ -74,6 +71,40 @@ def create_user():
     return message
   
 
+
+@app.route("/clientWithdraw", methods=["POST"])
+def withdraw_order_by_id():
+  try:
+    db_connection = getdb()
+    data = request.get_json()
+    print(data)
+    print(data)
+    mycursor = db_connection.cursor()
+
+    sql = """
+    UPDATE quote_request SET status = %s WHERE id = %s;
+    """
+    user_data = ("Cancelled", data["id"])
+    mycursor.execute(sql, user_data)
+    db_connection.commit()
+    message = jsonify({"message": "order was successfully cancelled"}), 200
+  except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    message = jsonify({"message": f"could not complete, Error: {err}"}), 422
+
+  except Exception as e:
+    print(f"Unexpected Error: {e}")
+    message = jsonify({"message": "An unexpected error occurred"}), 500
+
+
+  finally:
+    if db_connection.is_connected():
+      mycursor.close()
+      db_connection.close()
+    return message
+
+
+
 @app.route("/createQuoteRequest", methods = ["POST"])
 def create_quote_request():
     try:
@@ -111,8 +142,7 @@ def create_quote_request():
       if db_connection.is_connected():
         mycursor.close()
         db_connection.close()
-      return message
-    
+      return message    
 
 @app.route("/checkExistingUser/<email>")
 def check_existing_user(email):
