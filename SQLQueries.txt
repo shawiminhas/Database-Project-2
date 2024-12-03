@@ -10,6 +10,7 @@ CREATE TABLE users(
 );
 
 INSERT INTO users (first_name, last_name, email, phone_number, address, credit_card) VALUES (%s, %s, %s, %s, %s, %s);
+SELECT COUNT(*) FROM users WHERE email = %s;
 
 CREATE TABLE quote_request (
   quote_request_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -33,6 +34,10 @@ CREATE TABLE quote_request (
     %s
   );
 
+  UPDATE quote_request SET status = %s WHERE id = %s;
+  UPDATE quote_request SET messages = %s WHERE id = %s;
+  
+
 SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.messages, quote_request.status
   FROM users
   INNER JOIN quote_request ON quote_request.client_id = users.id
@@ -43,6 +48,8 @@ SELECT users.first_name, users.last_name, users.email, users.phone_number, users
   INNER JOIN quote_request ON quote_request.client_id = users.id
   WHERE users.email = %s
   ORDER BY (quote_request.status = 'Pending') DESC;
+
+SELECT messages FROM quote_request WHERE id = %s;
 
 
 

@@ -107,81 +107,107 @@ def withdraw_order_by_id():
 
 @app.route("/createQuoteRequest", methods = ["POST"])
 def create_quote_request():
-    try:
-      db_connection = getdb()
-      data = request.get_json()
-      print(data)
-      mycursor = db_connection.cursor()
+  try:
+    db_connection = getdb()
+    data = request.get_json()
+    print(data)
+    mycursor = db_connection.cursor()
 
-      sql = """
-      INSERT INTO quote_request(client_id, address, square_feet, proposed_price, pictures) 
-      VALUES (
-        (SELECT id FROM users WHERE email = %s),
-        %s,
-        %s,
-        %s,
-        %s
-      );
-      """
-      user_data = (data["email"], data["address"], data["squareFeet"], data["proposedPrice"], data["pictures"])
-      mycursor.execute(sql, user_data)
+    sql = """
+    INSERT INTO quote_request(client_id, address, square_feet, proposed_price, pictures) 
+    VALUES (
+      (SELECT id FROM users WHERE email = %s),
+      %s,
+      %s,
+      %s,
+      %s
+    );
+    """
+    user_data = (data["email"], data["address"], data["squareFeet"], data["proposedPrice"], data["pictures"])
+    mycursor.execute(sql, user_data)
 
-      db_connection.commit()
-      message = jsonify({"message": "data successfully inserted into database"}), 200
+    db_connection.commit()
+    message = jsonify({"message": "data successfully inserted into database"}), 200
+  
+  except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    message = jsonify({"message": f"could not complete, Error: {err}"}), 422
+
+  except Exception as e:
+    print(f"Unexpected Error: {e}")
+    message = jsonify({"message": "An unexpected error occurred"}), 500
+
+  finally:
+    if db_connection.is_connected():
+      mycursor.close()
+      db_connection.close()
+    return message 
+  
+
+@app.route("/updateRequestStatus", methods=["POST"])
+def update_request_status():
+  try:
+    db_connection = getdb()
+    mycursor = db_connection.cursor()
+    data = request.get_json()
+    print(data)
+    sql = "UPDATE quote_request SET status = %s WHERE id = %s;"
+    user_data = (data["status"], data["id"])
+    mycursor.execute(sql, user_data)
+    db_connection.commit()
     
-    except mysql.connector.Error as err:
-      print(f"Error: {err}")
-      message = jsonify({"message": f"could not complete, Error: {err}"}), 422
+    message = jsonify({"message": "data successfully inserted into database"}), 200
+  
+  except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    message = jsonify({"message": f"Could not complete, Error: {err}"}), 422
+  except Exception as e:
+    print(f"Unexpected Error: {e}")
+    message = jsonify({"message": "An unexpected error occurred"}), 500
+  finally:
+    if db_connection.is_connected():
+      mycursor.close()
+      db_connection.close()
+  return message
 
-    except Exception as e:
-      print(f"Unexpected Error: {e}")
-      message = jsonify({"message": "An unexpected error occurred"}), 500
 
-    finally:
-      if db_connection.is_connected():
-        mycursor.close()
-        db_connection.close()
-      return message 
 
 @app.route("/storeMessage", methods=["POST"])
 def store_message():
-    try:
-        db_connection = getdb()
-        mycursor = db_connection.cursor()
-        data = request.get_json()
+  try:
+    db_connection = getdb()
+    mycursor = db_connection.cursor()
+    data = request.get_json()
 
-        print("Received data:", data)
+    newMessage = {"message": data["message"], "is_admin": data["isAdmin"], "id": data["id"]}
+    allMessages = get_messages_by_id(data['id'])
 
-        newMessage = {"message": data["message"], "is_admin": data["isAdmin"], "id": data["id"]}
-        allMessages = get_messages_by_id(data['id'])
+    if not allMessages:
+        allMessages = []
 
-        if not allMessages:
-            allMessages = []
+    allMessages.append(newMessage)
+    print(allMessages)
 
-        allMessages.append(newMessage)
-        print(allMessages)
+    allMessagesJson = json.dumps(allMessages)
 
-        allMessagesJson = json.dumps(allMessages)
+    sql = "UPDATE quote_request SET messages = %s WHERE id = %s;"
+    user_data = (allMessagesJson, data['id'])
+    mycursor.execute(sql, user_data)
+    db_connection.commit()
 
-        sql = "UPDATE quote_request SET messages = %s WHERE id = %s;"
-        user_data = (allMessagesJson, data['id'])
-        mycursor.execute(sql, user_data)
-        db_connection.commit()
+    message = jsonify({"message": "data successfully inserted into database"}), 200
 
-        message = jsonify({"message": "data successfully inserted into database"}), 200
-
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        message = jsonify({"message": f"Could not complete, Error: {err}"}), 422
-    except Exception as e:
-        print(f"Unexpected Error: {e}")
-        message = jsonify({"message": "An unexpected error occurred"}), 500
-    finally:
-        if db_connection.is_connected():
-            mycursor.close()
-            db_connection.close()
-
-        return message
+  except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    message = jsonify({"message": f"Could not complete, Error: {err}"}), 422
+  except Exception as e:
+    print(f"Unexpected Error: {e}")
+    message = jsonify({"message": "An unexpected error occurred"}), 500
+  finally:
+    if db_connection.is_connected():
+      mycursor.close()
+      db_connection.close()
+  return message
 
 
 @app.route("/checkExistingUser/<email>")
@@ -259,33 +285,33 @@ def get_quote_requests(email, admin):
   
 @app.route("/getMessagesById/<id>")
 def get_messages_by_id(id):
-    try:
-      db_connection = getdb()
-      mycursor = db_connection.cursor()
-      sql = """
-        SELECT messages FROM quote_request WHERE id = %s;
-      """
-      mycursor.execute(sql, (id, ))
-      result = mycursor.fetchall()
-      json_string = result[0][0]
-      if json_string is not None:
-        return json.loads(json_string)
+  try:
+    db_connection = getdb()
+    mycursor = db_connection.cursor()
+    sql = """
+      SELECT messages FROM quote_request WHERE id = %s;
+    """
+    mycursor.execute(sql, (id, ))
+    result = mycursor.fetchall()
+    json_string = result[0][0]
+    if json_string is not None:
+      return json.loads(json_string)
 
-      else:
-        return []
-    
-    except mysql.connector.Error as err:
-      print(f"Database Error: {err}")
-      return jsonify({"message": f"Database error occurred: {err}"}), 500
-    
-    except Exception as e:
-      print(f"Unexpected Error: {e}")
-      return jsonify({"message": "An unexpected error occurred"}), 500
+    else:
+      return []
+  
+  except mysql.connector.Error as err:
+    print(f"Database Error: {err}")
+    return jsonify({"message": f"Database error occurred: {err}"}), 500
+  
+  except Exception as e:
+    print(f"Unexpected Error: {e}")
+    return jsonify({"message": "An unexpected error occurred"}), 500
 
-    finally:
-      if db_connection.is_connected():
-        mycursor.close()
-        db_connection.close()
+  finally:
+    if db_connection.is_connected():
+      mycursor.close()
+      db_connection.close()
 
     
 

@@ -68,9 +68,7 @@ export default class APIService {
 
   static async getQuoteRequests(email, admin) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/getQuoteRequests/${email}/${admin}`
-      );
+      const response = await fetch(`http://localhost:5000/getQuoteRequests/${email}/${admin}`);
       if (!response.ok) {
         const error = await response.text();
         throw new Error(`HTTP Error ${response.status}: ${error}`);
@@ -85,9 +83,7 @@ export default class APIService {
 
   static async existingUser(email) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/checkExistingUser/${email}`
-      );
+      const response = await fetch(`http://localhost:5000/checkExistingUser/${email}`);
       if (!response.ok) {
         const error = await response.text();
         throw new Error(`HTTP Error ${response.status}: ${error}`);
@@ -101,9 +97,7 @@ export default class APIService {
 
   static async getAllMessages(id) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/getMessagesById/${id}`
-      );
+      const response = await fetch(`http://localhost:5000/getMessagesById/${id}`);
       if (!response.ok) {
         const error = await response.text();
         throw new Error(`HTTP Error ${response.status}: ${error}`);
@@ -129,8 +123,28 @@ export default class APIService {
         throw new Error(`HTTP Error ${response.status}: ${error}`);
       }
       return await response.json();
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async updateRequestStatus(id, status) {
+    try {
+      const response = await fetch("http://localhost:5000/updateRequestStatus", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id, status: status }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${error}`);
+      }
+      return await response.json();
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -10,15 +10,16 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
   const [messages, setMessages] = useState([]);
   const [id, setId] = useState(null);
 
+  useEffect(() => {}, []);
+
   if (!data || data.length === 0) {
-    return (
-      <p className="text-center text-gray-500 py-4">No quotes available.</p>
-    );
+    return <p className="text-center text-gray-500 py-4">No quotes available.</p>;
   }
 
-  // const onAdminResponse = async(buttonType) = {
-
-  // }
+  const onAdminUpdateStatus = async (id, orderStatus) => {
+    const response = await APIService.updateRequestStatus(id.id, orderStatus);
+    console.log(response);
+  };
 
   const getMessages = async (id) => {
     const newMessages = await APIService.getAllMessages(id);
@@ -46,19 +47,19 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
     return (
       <div className="space-x-2 flex flex-shrink">
         <button
-          onClick={() => onAdminResponse("Accept")}
+          onClick={() => onAdminUpdateStatus(orderId, "Accepted")}
           className="p-2 text-white rounded-lg bg-green-500 hover:bg-green-600"
         >
           Accept
         </button>
         <button
-          onClick={() => onAdminResponse("Negotiate")}
+          onClick={() => onAdminUpdateStatus(orderId, "Negotiating")}
           className="p-2 text-white rounded-lg bg-gray-500 hover:bg-gray-600"
         >
           Negotiate
         </button>
         <button
-          onClick={() => onAdminResponse("Reject")}
+          onClick={() => onAdminUpdateStatus(orderId, "Rejected")}
           className="p-2 text-white rounded-lg bg-red-500 hover:bg-red-600"
         >
           Reject
@@ -70,10 +71,7 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
   const UserButton = (id) => {
     return (
       <div className="space-x-2 flex flex-shrink">
-        <button
-          onClick={() => clientWithdraw(id)}
-          className="p-2 text-white rounded-lg bg-gray-500 hover:bg-gray-600"
-        >
+        <button onClick={() => clientWithdraw(id)} className="p-2 text-white rounded-lg bg-gray-500 hover:bg-gray-600">
           Withdraw
         </button>
       </div>
@@ -88,10 +86,7 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
       return (
         <div className="text-wrap">
           {showFullText ? value : `${value.substring(0, maxLength)}...`}
-          <button
-            onClick={() => getMessages(id)}
-            className="text-blue-500 text-sm ml-2 hover:underline"
-          >
+          <button onClick={() => getMessages(id)} className="text-blue-500 text-sm ml-2 hover:underline">
             {showFullText ? "Show Less" : "Show More"}
           </button>
         </div>
@@ -117,31 +112,24 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
                 key={key}
                 className="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                {key
-                  .replace(/_/g, " ")
-                  .replace(/\b\w/g, (char) => char.toUpperCase())}
+                {key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr
-              key={row.id || rowIndex}
-              className={rowIndex % 2 === 0 ? "" : "bg-gray-100"}
-            >
+            <tr key={row.id || rowIndex} className={rowIndex % 2 === 0 ? "" : "bg-gray-100"}>
               {Object.values(row).map((value, columnIndex) => (
-                <td
-                  key={`${rowIndex}-${columnIndex}`}
-                  className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                >
+                <td key={`${rowIndex}-${columnIndex}`} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {renderCellContent(value, row.id, row.messages)}
                 </td>
               ))}
               <td>
                 {isAdmin
                   ? row.status !== "Completed" &&
-                    row.status !== "Accepted" && <AdminButton id={row.id} />
+                    row.status !== "Accepted" &&
+                    row.status !== "Rejected" && <AdminButton id={row.id} />
                   : row.status === "Pending" && <UserButton id={row.id} />}
               </td>
             </tr>

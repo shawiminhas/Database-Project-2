@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-const Messages = ({
-  showMessages,
-  setShowMessages,
-  messages,
-  postMessage,
-  id,
-}) => {
+const Messages = ({ showMessages, setShowMessages, messages, postMessage, id }) => {
   const { has } = useAuth();
   const admin = has({ role: "org:admin" });
 
@@ -25,11 +19,7 @@ const Messages = ({
           </div>
           <div className="flex-grow overflow-y-auto space-y-4">
             {messages.map((message, index) => (
-              <Message
-                key={index}
-                isAdmin={message.is_admin}
-                message={message.message}
-              />
+              <Message key={index} isAdmin={message.is_admin} message={message.message} />
             ))}
           </div>
           <div className="flex items-center gap-2 mt-4">
