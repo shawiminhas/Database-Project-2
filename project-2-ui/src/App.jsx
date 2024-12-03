@@ -13,6 +13,7 @@ import SignInRedirect from "./components/SignInRedirect";
 import NotFound from "./pages/NotFound";
 import ForbiddenAccess from "./pages/ForbiddenAccess";
 import Quotes from "./pages/Quotes";
+import Messages from "./components/Messages";
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/quotes" element={<Quotes />} />
             <Route path="/orders" element={<Dashboard />} />
-            <Route path="/bills" element={<Dashboard />} />
+            <Route path="/bills" element={<Messages />} />
             <Route
               path="/metrics"
               element={

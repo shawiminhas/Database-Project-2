@@ -4,6 +4,7 @@ import mysql.connector # type: ignore
 from mysql.connector import IntegrityError # type: ignore
 from flask import Flask, jsonify, request # type: ignore
 from flask_cors import CORS # type: ignore
+import json
 
 
 load_dotenv()
@@ -78,7 +79,6 @@ def withdraw_order_by_id():
     db_connection = getdb()
     data = request.get_json()
     print(data)
-    print(data)
     mycursor = db_connection.cursor()
 
     sql = """
@@ -142,7 +142,50 @@ def create_quote_request():
       if db_connection.is_connected():
         mycursor.close()
         db_connection.close()
-      return message    
+      return message 
+
+import json
+
+@app.route("/storeMessage", methods=["POST"])
+def store_message():
+    try:
+        db_connection = getdb()
+        mycursor = db_connection.cursor()
+        data = request.get_json()
+
+        print("Received data:", data)
+
+        newMessage = {"message": data["message"], "is_admin": data["isAdmin"], "id": data["id"]}
+        allMessages = get_messages_by_id(data['id'])
+
+        if not allMessages:
+            allMessages = []
+
+        allMessages.append(newMessage)
+        print(allMessages)
+
+        allMessagesJson = json.dumps(allMessages)
+
+        sql = "UPDATE quote_request SET messages = %s WHERE id = %s;"
+        user_data = (allMessagesJson, data['id'])
+        mycursor.execute(sql, user_data)
+        db_connection.commit()
+
+        message = jsonify({"message": "data successfully inserted into database"}), 200
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        message = jsonify({"message": f"Could not complete, Error: {err}"}), 422
+    except Exception as e:
+        print(f"Unexpected Error: {e}")
+        message = jsonify({"message": "An unexpected error occurred"}), 500
+    finally:
+        if db_connection.is_connected():
+            mycursor.close()
+            db_connection.close()
+
+        return message
+
 
 @app.route("/checkExistingUser/<email>")
 def check_existing_user(email):
@@ -216,9 +259,38 @@ def get_quote_requests(email, admin):
       if db_connection.is_connected():
         mycursor.close()
         db_connection.close()
+  
+@app.route("/getMessagesById/<id>")
+def get_messages_by_id(id):
+    try:
+      db_connection = getdb()
+      mycursor = db_connection.cursor()
+      sql = """
+        SELECT messages FROM quote_request WHERE id = %s;
+      """
+      mycursor.execute(sql, (id, ))
+      result = mycursor.fetchall()
+      json_string = result[0][0]
+      if json_string is not None:
+        return json.loads(json_string)
 
+      else:
+        return []
+    
+    except mysql.connector.Error as err:
+      print(f"Database Error: {err}")
+      return jsonify({"message": f"Database error occurred: {err}"}), 500
+    
+    except Exception as e:
+      print(f"Unexpected Error: {e}")
+      return jsonify({"message": "An unexpected error occurred"}), 500
 
+    finally:
+      if db_connection.is_connected():
+        mycursor.close()
+        db_connection.close()
 
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -97,4 +97,39 @@ export default class APIService {
       throw error;
     }
   }
+
+  static async getAllMessages(id) {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/getMessagesById/${id}`
+      );
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${error}`);
+      }
+      return await response.json();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static async postMessage(id, isAdmin, message) {
+    try {
+      const response = await fetch(`http://localhost:5000/storeMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id, isAdmin: isAdmin, message: message }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${error}`);
+      }
+      return await response.json();
+    } catch (e) {
+      throw e;
+    }
+  }
 }

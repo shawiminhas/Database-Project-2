@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import APIService from "./APIService";
+import Messages from "./Messages";
 
 const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
   const { has } = useAuth();
   const isAdmin = has({ role: "org:admin" });
+  const [showMessages, setShowMessages] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [id, setId] = useState(null);
 
   if (!data || data.length === 0) {
     return (
@@ -15,6 +19,19 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
   // const onAdminResponse = async(buttonType) = {
 
   // }
+
+  const getMessages = async (id) => {
+    const newMessages = await APIService.getAllMessages(id);
+    setMessages(newMessages);
+    setShowMessages(!showMessages);
+    setId(id);
+  };
+
+  const postMessage = async (id, message, isAdmin) => {
+    await APIService.postMessage(id, isAdmin, message);
+    const newMessages = await APIService.getAllMessages(id);
+    setMessages(newMessages);
+  };
 
   const clientWithdraw = async (id) => {
     try {
@@ -63,16 +80,16 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
     );
   };
 
-  const renderCellContent = (value) => {
+  const renderCellContent = (value, id, note) => {
     const [showFullText, setShowFullText] = useState(false);
     const maxLength = 30;
 
-    if (typeof value === "string" && value.length > maxLength) {
+    if (typeof value === "string" && value == note) {
       return (
         <div className="text-wrap">
           {showFullText ? value : `${value.substring(0, maxLength)}...`}
           <button
-            onClick={() => setShowFullText(!showFullText)}
+            onClick={() => getMessages(id)}
             className="text-blue-500 text-sm ml-2 hover:underline"
           >
             {showFullText ? "Show Less" : "Show More"}
@@ -85,6 +102,13 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
 
   return (
     <div className="overflow-x-auto">
+      <Messages
+        showMessages={showMessages}
+        setShowMessages={setShowMessages}
+        messages={messages}
+        postMessage={postMessage}
+        id={id}
+      />
       <table className="min-w-full border-collapse border border-gray-200">
         <thead>
           <tr>
@@ -111,7 +135,7 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
                   key={`${rowIndex}-${columnIndex}`}
                   className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                 >
-                  {renderCellContent(value)}
+                  {renderCellContent(value, row.id, row.note)}
                 </td>
               ))}
               <td>
