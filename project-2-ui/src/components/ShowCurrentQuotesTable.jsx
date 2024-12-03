@@ -80,11 +80,11 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
     );
   };
 
-  const renderCellContent = (value, id, note) => {
+  const renderCellContent = (value, id, messages) => {
     const [showFullText, setShowFullText] = useState(false);
     const maxLength = 30;
 
-    if (typeof value === "string" && value == note) {
+    if (typeof value === "string" && value == messages) {
       return (
         <div className="text-wrap">
           {showFullText ? value : `${value.substring(0, maxLength)}...`}
@@ -135,7 +135,7 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
                   key={`${rowIndex}-${columnIndex}`}
                   className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                 >
-                  {renderCellContent(value, row.id, row.note)}
+                  {renderCellContent(value, row.id, row.messages)}
                 </td>
               ))}
               <td>

@@ -17,29 +17,28 @@ CREATE TABLE quote_request (
   address VARCHAR(200) NOT NULL,
   square_feet INT NOT NULL,
   proposed_price DECIMAL(10, 2) NOT NULL,
-  note VARCHAR(1000) NOT NULL,
   pictures VARCHAR(50) NOT NULL,
   status VARCHAR(20) DEFAULT "Pending",
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  messages JSON DEFAULT [],
   FOREIGN KEY (client_id) REFERENCES users(id)
 );
 
-INSERT INTO quote_request(client_id, address, square_feet, proposed_price, note, pictures) 
+ INSERT INTO quote_request(client_id, address, square_feet, proposed_price, pictures) 
   VALUES (
     (SELECT id FROM users WHERE email = %s),
-    %s,
     %s,
     %s,
     %s,
     %s
   );
 
-SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.note, quote_request.status
+SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.messages, quote_request.status
   FROM users
   INNER JOIN quote_request ON quote_request.client_id = users.id
   ORDER BY (quote_request.status = 'Pending') DESC;
 
-SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.note, quote_request.status 
+SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.messages, quote_request.status 
   FROM users
   INNER JOIN quote_request ON quote_request.client_id = users.id
   WHERE users.email = %s

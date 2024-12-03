@@ -114,17 +114,16 @@ def create_quote_request():
       mycursor = db_connection.cursor()
 
       sql = """
-      INSERT INTO quote_request(client_id, address, square_feet, proposed_price, note, pictures) 
+      INSERT INTO quote_request(client_id, address, square_feet, proposed_price, pictures) 
       VALUES (
         (SELECT id FROM users WHERE email = %s),
-        %s,
         %s,
         %s,
         %s,
         %s
       );
       """
-      user_data = (data["email"], data["address"], data["squareFeet"], data["proposedPrice"], data["note"], data["pictures"])
+      user_data = (data["email"], data["address"], data["squareFeet"], data["proposedPrice"], data["pictures"])
       mycursor.execute(sql, user_data)
 
       db_connection.commit()
@@ -143,8 +142,6 @@ def create_quote_request():
         mycursor.close()
         db_connection.close()
       return message 
-
-import json
 
 @app.route("/storeMessage", methods=["POST"])
 def store_message():
@@ -225,7 +222,7 @@ def get_quote_requests(email, admin):
 
       if admin == "True":
         sql = """
-        SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.note, quote_request.status
+        SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.messages, quote_request.status
         FROM users
         INNER JOIN quote_request ON quote_request.client_id = users.id
         ORDER BY (quote_request.status = 'Pending') DESC;
@@ -233,7 +230,7 @@ def get_quote_requests(email, admin):
         mycursor.execute(sql)
       else:
         sql = """
-        SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.note, quote_request.status 
+        SELECT users.first_name, users.last_name, users.email, users.phone_number, users.address, quote_request.client_id, quote_request.id, quote_request.square_feet, quote_request.proposed_price, quote_request.pictures, quote_request.messages, quote_request.status 
         FROM users
         INNER JOIN quote_request ON quote_request.client_id = users.id
         WHERE users.email = %s

@@ -23,6 +23,7 @@ export default class APIService {
   }
 
   static async createQuoteRequest(body) {
+    console.log(body);
     try {
       const response = await fetch("http://localhost:5000/createQuoteRequest", {
         method: "POST",

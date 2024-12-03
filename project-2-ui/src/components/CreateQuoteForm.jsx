@@ -28,7 +28,7 @@ const CreateQuoteForm = () => {
     squareFeet: "",
     proposedPrice: "",
     pictures: "",
-    note: "",
+    messages: "",
   });
 
   useEffect(() => {
@@ -52,7 +52,6 @@ const CreateQuoteForm = () => {
         squareFeet: "",
         proposedPrice: "",
         pictures: "",
-        note: "",
       });
 
       setTimeout(() => {
@@ -123,15 +122,6 @@ const CreateQuoteForm = () => {
             maxLength={40}
             className="w-full p-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-400"
           />
-          <textarea
-            aria-label="Enter your note"
-            value={formData.note}
-            onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-            placeholder="Enter your note"
-            required
-            maxLength={1000}
-            className="w-full p-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-400 h-24 resize-none"
-          ></textarea>
           <button
             type="submit"
             className="w-full text-white bg-neutral-600 p-3 font-semibold rounded-md hover:scale-105 hover:transition-transform hover:shadow-md"
