@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import APIService from './APIService.js';
+import React, { useEffect, useState } from "react";
+import APIService from "./APIService.js";
 import { useUser } from "@clerk/clerk-react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function InformationForm() {
   const { user, isLoaded } = useUser();
@@ -18,15 +18,15 @@ function InformationForm() {
 
   useEffect(() => {
     if (user && isLoaded) {
-      setFormData({ ...formData, email: user.primaryEmailAddress?.emailAddress })
+      setFormData({ ...formData, email: user.primaryEmailAddress?.emailAddress });
     }
-  }, [isLoaded, user])
+  }, [isLoaded, user]);
 
   const insertUser = async () => {
     try {
-      await APIService.insertUser(formData)
+      await APIService.insertUser(formData);
       console.log("User inserted successfully");
-      navigate('/dashboard');
+      navigate("/dashboard");
       setFormData({
         firstName: "",
         lastName: "",
@@ -44,9 +44,7 @@ function InformationForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await insertUser();
-    
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-5 bg-gray-100">
@@ -82,6 +80,8 @@ function InformationForm() {
           <input
             aria-label="Enter your phone number"
             type="text"
+            minLength={10}
+            maxLength={10}
             value={formData.phoneNumber}
             onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
             placeholder="Phone number"
@@ -117,7 +117,6 @@ function InformationForm() {
       </div>
     </div>
   );
-  
 }
 
-export default InformationForm
+export default InformationForm;

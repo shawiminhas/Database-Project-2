@@ -54,7 +54,6 @@ const SubmitButton = ({ is_admin, id, postMessage }) => {
       return;
     }
     postMessage(id, message, is_admin);
-
     setMessage("");
   };
 

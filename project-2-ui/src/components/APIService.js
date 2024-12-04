@@ -147,4 +147,32 @@ export default class APIService {
       throw error;
     }
   }
+
+  static async createNewOrder(quoteId, clientId, workStartDate, workEndDate, orderStatus, totalPrice) {
+    try {
+      const response = await fetch("http://localhost:5000/createNewOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quote_id: quoteId,
+          client_id: clientId,
+          work_start_date: workStartDate,
+          work_end_date: workEndDate,
+          order_status: orderStatus,
+          total_price: totalPrice,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${error}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
 }

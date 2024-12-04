@@ -10,7 +10,7 @@ const Quotes = () => {
   const { has } = useAuth();
   const [response, setResponse] = useState([]);
   const [showNewQuote, setShowNewQuote] = useState(false);
-  const [showCurrentQuote, setShowCurrentQuote] = useState(false);
+  const [showCurrentQuote, setShowCurrentQuote] = useState(true);
 
   const isAdmin = has({ role: "org:admin" });
 
@@ -29,10 +29,7 @@ const Quotes = () => {
   };
 
   const dataFunction = async () => {
-    const data = await APIService.getQuoteRequests(
-      user.primaryEmailAddress.emailAddress,
-      isAdmin ? "True" : "False"
-    );
+    const data = await APIService.getQuoteRequests(user.primaryEmailAddress.emailAddress, isAdmin ? "True" : "False");
     setResponse(data);
   };
 
@@ -57,10 +54,7 @@ const Quotes = () => {
 
       {showNewQuote && <CreateQuoteForm />}
       {showCurrentQuote && response.length > 0 && (
-        <ShowCurrentQuotesTable
-          data={response}
-          setDataFunction={dataFunction}
-        />
+        <ShowCurrentQuotesTable data={response} setDataFunction={dataFunction} />
       )}
     </>
   );

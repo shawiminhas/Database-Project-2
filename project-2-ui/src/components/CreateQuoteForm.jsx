@@ -13,9 +13,7 @@ const CreateQuoteForm = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="border-4 p-6 rounded-xl hover:scale-110 transition-all font-semibold border-gray-400 shadow-xl bg-white text-2xl text-gray-800">
-          <p className="text-center">
-            You are the admin, you don't pay for services!
-          </p>
+          <p className="text-center">You are the admin, you don't pay for services!</p>
         </div>
       </div>
     );
@@ -43,9 +41,7 @@ const CreateQuoteForm = () => {
   const createNewQuote = async () => {
     try {
       await APIService.createQuoteRequest(formData);
-      setStatusMessage(
-        "Quote successfully created! You will be redirected momentarily"
-      );
+      setStatusMessage("Quote successfully created! You will be redirected momentarily");
       setFormData({
         email: "",
         address: "",
@@ -57,7 +53,7 @@ const CreateQuoteForm = () => {
       setTimeout(() => {
         setStatusMessage("");
         navigate("/dashboard");
-      }, 6000);
+      }, 3000);
     } catch (error) {
       console.log("An error occurred", error);
       setStatusMessage("An error occurred while creating the quote.");
@@ -72,17 +68,13 @@ const CreateQuoteForm = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-5">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-2xl">
-        <h1 className="text-3xl font-bold text-gray-700 mb-6 text-center">
-          Enter Quote Information
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-700 mb-6 text-center">Enter Quote Information</h1>
         <form onSubmit={handleSubmit} className="space-y-5">
           <input
             aria-label="Enter your address"
             type="text"
             value={formData.address}
-            onChange={(e) =>
-              setFormData({ ...formData, address: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             placeholder="Enter your address"
             required
             className="w-full p-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-400"
@@ -92,9 +84,7 @@ const CreateQuoteForm = () => {
             type="number"
             min={0}
             value={formData.squareFeet}
-            onChange={(e) =>
-              setFormData({ ...formData, squareFeet: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, squareFeet: e.target.value })}
             placeholder="Enter the total square feet"
             required
             className="w-full p-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-400"
@@ -104,9 +94,7 @@ const CreateQuoteForm = () => {
             type="number"
             min={1}
             value={formData.proposedPrice}
-            onChange={(e) =>
-              setFormData({ ...formData, proposedPrice: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, proposedPrice: e.target.value })}
             placeholder="Enter your proposed price"
             className="w-full p-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-400"
           />
@@ -114,9 +102,7 @@ const CreateQuoteForm = () => {
             aria-label="Enter the link for your pictures"
             type="url"
             value={formData.pictures}
-            onChange={(e) =>
-              setFormData({ ...formData, pictures: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, pictures: e.target.value })}
             placeholder="Enter the link for your pictures"
             required
             maxLength={40}
@@ -129,11 +115,7 @@ const CreateQuoteForm = () => {
             Submit
           </button>
         </form>
-        {statusMessage && (
-          <p className="mt-6 text-center text-lg font-medium text-green-600">
-            {statusMessage}
-          </p>
-        )}
+        {statusMessage && <p className="mt-6 text-center text-lg font-medium">{statusMessage}</p>}
       </div>
     </div>
   );

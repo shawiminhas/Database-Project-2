@@ -13,7 +13,7 @@ INSERT INTO users (first_name, last_name, email, phone_number, address, credit_c
 SELECT COUNT(*) FROM users WHERE email = %s;
 
 CREATE TABLE quote_request (
-  quote_request_id INT PRIMARY KEY AUTO_INCREMENT,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   client_id INT,
   address VARCHAR(200) NOT NULL,
   square_feet INT NOT NULL,
@@ -51,5 +51,16 @@ SELECT users.first_name, users.last_name, users.email, users.phone_number, users
 
 SELECT messages FROM quote_request WHERE id = %s;
 
-
+CREATE TABLE orders(
+	order_id INT PRIMARY KEY AUTO_INCREMENT,
+  quote_id INT NOT NULL,
+  client_id INT NOT NULL,
+  work_start_date DATE,
+  work_end_date DATE,
+  order_status VARCHAR(20),
+  total_price DECIMAL(10, 2) NOT NULL,
+  creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (quote_id) REFERENCES quote_request(id) ON DELETE CASCADE,
+  FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE
+);
 

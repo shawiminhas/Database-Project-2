@@ -2,23 +2,32 @@ import React, { useEffect, useState } from "react";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import APIService from "./APIService";
 import Messages from "./Messages";
+import { useNavigate } from "react-router-dom";
 
 const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
+  const navigate = useNavigate();
+  console.log(data);
   const { has } = useAuth();
   const isAdmin = has({ role: "org:admin" });
   const [showMessages, setShowMessages] = useState(false);
   const [messages, setMessages] = useState([]);
   const [id, setId] = useState(null);
 
-  useEffect(() => {}, []);
-
   if (!data || data.length === 0) {
     return <p className="text-center text-gray-500 py-4">No quotes available.</p>;
   }
 
   const onAdminUpdateStatus = async (id, orderStatus) => {
-    const response = await APIService.updateRequestStatus(id.id, orderStatus);
-    console.log(response);
+    try {
+      const response = await APIService.updateRequestStatus(id.id, orderStatus);
+      console.log(response);
+      setDataFunction();
+      if (orderStatus === "Accepted") {
+        navigate("/addOrderInformation");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
   };
 
   const getMessages = async (id) => {
@@ -38,8 +47,8 @@ const ShowCurrentQuotesTable = ({ data, setDataFunction }) => {
     try {
       await APIService.withdrawOrder(id);
       setDataFunction();
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log("Error withdrawing order:", e);
     }
   };
 

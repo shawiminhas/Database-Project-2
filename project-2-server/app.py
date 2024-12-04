@@ -72,6 +72,42 @@ def create_user():
     return message
   
 
+  
+@app.route("/createNewOrder", methods=["POST"])
+def create_new_order():
+  try:
+    db_connection = getdb()
+    data = request.get_json()
+    print(data)
+    mycursor = db_connection.cursor()
+
+    sql = """
+    INSERT INTO orders(quote_id, client_id, work_start_date, work_end_date, order_status, total_price) VALUES (%s, %s, %s, %s, %s, %s);
+    """
+    user_data = (data["quote_id"], data["client_id"], data["work_start_date"], data["work_end_date"], data["order_status"], data["total_price"])
+
+    mycursor.execute(sql, user_data)
+    db_connection.commit()
+    message = jsonify({"message": "data successfully inserted into database"}), 200
+
+  except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    message = jsonify({"message": f"could not complete, Error: {err}"}), 422
+
+  except Exception as e:
+    print(f"Unexpected Error: {e}")
+    message = jsonify({"message": "An unexpected error occurred"}), 500
+
+
+  finally:
+    if db_connection.is_connected():
+      mycursor.close()
+      db_connection.close()
+  
+  return message
+
+  
+
 
 @app.route("/clientWithdraw", methods=["POST"])
 def withdraw_order_by_id():
@@ -313,7 +349,7 @@ def get_messages_by_id(id):
       mycursor.close()
       db_connection.close()
 
-    
+
 
 if __name__ == "__main__":
     app.run(debug=True)

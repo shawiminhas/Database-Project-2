@@ -1,9 +1,4 @@
-import {
-  SignedIn,
-  SignedOut,
-  RedirectToSignIn,
-  Protect,
-} from "@clerk/clerk-react";
+import { SignedIn, SignedOut, RedirectToSignIn, Protect } from "@clerk/clerk-react";
 import React from "react";
 import InformationForm from "./components/InformationForm";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -14,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import ForbiddenAccess from "./pages/ForbiddenAccess";
 import Quotes from "./pages/Quotes";
 import Messages from "./components/Messages";
+import CreateOrderForm from "./components/CreateOrderForm";
 
 function App() {
   return (
@@ -41,6 +37,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route path="/addInformation" element={<InformationForm />} />
+          <Route path="/addOrderInformation" element={<CreateOrderForm />} />
         </Routes>
       </SignedIn>
     </BrowserRouter>
