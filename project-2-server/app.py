@@ -4,6 +4,7 @@ import mysql.connector # type: ignore
 from mysql.connector import IntegrityError # type: ignore
 from flask import Flask, jsonify, request # type: ignore
 from flask_cors import CORS # type: ignore
+from datetime import datetime, date
 import json
 
 
@@ -276,6 +277,10 @@ def check_existing_user(email):
       mycursor.close()
       db_connection.close()
 
+
+    
+
+
 @app.route("/getQuoteRequests/<email>/<admin>")
 def get_quote_requests(email, admin):
     try:
@@ -318,6 +323,52 @@ def get_quote_requests(email, admin):
       if db_connection.is_connected():
         mycursor.close()
         db_connection.close()
+
+
+
+@app.route("/orders/<email>/<is_admin>")
+def get_all_orders(email, is_admin):
+  try:
+    db_connection = getdb()
+    mycursor = db_connection.cursor()
+
+    if is_admin == "true":
+      sql = "SELECT * FROM orders;"
+      mycursor.execute(sql)
+    else:
+      sql = "SELECT id FROM users WHERE email = %s;"
+      user_data = email.split()
+      print(user_data)
+      mycursor.execute(sql, user_data)
+      client_id = mycursor.fetchone()[0]
+      print(client_id)
+      sql = "SELECT * FROM orders WHERE client_id = %s;"
+      mycursor.execute(sql, (client_id, ))
+    
+    result = mycursor.fetchall()
+    columns = [column[0] for column in mycursor.description] 
+    result_dict = [dict(zip(columns, row)) for row in result]
+    for row in result_dict:
+      for key, value in row.items():
+        if isinstance(value, (datetime, date)):
+          row[key] = value.strftime("%d %b %Y")
+    return jsonify(result_dict)
+
+  except mysql.connector.Error as err:
+    print(f"Database Error: {err}")
+    return jsonify({"message": f"Database error occurred: {err}"}), 500
+  
+  except Exception as e:
+    print(f"Unexpected Error: {e}")
+    return jsonify({"message": "An unexpected error occurred"}), 500
+
+  finally:
+    if db_connection.is_connected():
+      mycursor.close()
+      db_connection.close()
+  
+
+  
   
 @app.route("/getMessagesById/<id>")
 def get_messages_by_id(id):
@@ -348,7 +399,6 @@ def get_messages_by_id(id):
     if db_connection.is_connected():
       mycursor.close()
       db_connection.close()
-
 
 
 if __name__ == "__main__":

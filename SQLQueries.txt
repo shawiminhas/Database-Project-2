@@ -57,7 +57,7 @@ CREATE TABLE orders(
   client_id INT NOT NULL,
   work_start_date DATE,
   work_end_date DATE,
-  order_status VARCHAR(20),
+  order_status VARCHAR(20) DEFAULT Working,
   total_price DECIMAL(10, 2) NOT NULL,
   creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (quote_id) REFERENCES quote_request(id) ON DELETE CASCADE,

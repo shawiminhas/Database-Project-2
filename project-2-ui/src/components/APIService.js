@@ -81,6 +81,21 @@ export default class APIService {
     }
   }
 
+  static async getOrders(email, admin) {
+    try {
+      const response = await fetch(`http://localhost:5000/orders/${email}/${admin}`);
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${error}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.log("Error", error);
+      throw error;
+    }
+  }
+
   static async existingUser(email) {
     try {
       const response = await fetch(`http://localhost:5000/checkExistingUser/${email}`);

@@ -10,6 +10,7 @@ import ForbiddenAccess from "./pages/ForbiddenAccess";
 import Quotes from "./pages/Quotes";
 import Messages from "./components/Messages";
 import CreateOrderForm from "./components/CreateOrderForm";
+import Orders from "./pages/Orders";
 
 function App() {
   return (
@@ -24,8 +25,8 @@ function App() {
             <Route path="/" element={<SignInRedirect />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/quotes" element={<Quotes />} />
-            <Route path="/orders" element={<Dashboard />} />
-            <Route path="/bills" element={<Messages />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/bills" element={<Dashboard />} />
             <Route
               path="/metrics"
               element={
